@@ -29,6 +29,6 @@
     "chmod go-rwx -R $HOME/.m2"
   ],
   "script": [
-    "mvn -P '!strict' -DskipTests clean verify"
+    "travis_wait 30 mvn -P '!strict' -DskipTests clean verify"
   ],
 }
