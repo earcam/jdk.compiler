@@ -10,11 +10,13 @@
 
 	<groupId>io.earcam.wrapped</groupId>
 	<artifactId>jdk.compiler</artifactId>
-	<version>1.8.132</version>
+	<version>1.9.181</version>
 	<packaging>jar</packaging>
 
 	<description>Maven repackaging of OpenJDK's jdk.compiler module</description>
 	<!--
+	
+	This Java 9 exploratory branch currently requires the setting of JAVA_HOME to point to a v9 JDK.
 	
 	Required packages are derived from running JMOD against the jdk.compiler module.
 	
@@ -83,9 +85,9 @@
 	</distributionManagement>
 
 	<properties>
-		<openjdk.langtools.scm.tag>jdk8-b132</openjdk.langtools.scm.tag>
+		<openjdk.langtools.scm.tag>jdk-9+181</openjdk.langtools.scm.tag>
 		
-		<version.java.platform>8</version.java.platform>
+		<version.java.platform>9</version.java.platform>
 		<version.java>1.${version.java.platform}</version.java>
 		<maven.compiler.source>${version.java}</maven.compiler.source>
 		<maven.compiler.target>${version.java}</maven.compiler.target>
@@ -200,7 +202,7 @@
 						<phase>process-sources</phase>
 						<configuration>
 							<tasks>
-								<property name="boot.java.home" value="${env.JAVA_8_HOME}" />
+								<property name="langtools.jdk.home" value="${env.JAVA_9_HOME}" />
 								<property name="basedir" value="${project.build.directory}/checkout/make" />
 								<ant 
 									antfile="${project.build.directory}/checkout/make/build.xml"
@@ -218,79 +220,104 @@
 						<configuration>
 							<target>
 								<copy todir="${dir.source}/com/sun/source/doctree">
-									<fileset dir="${project.build.directory}/checkout/src/share/classes/com/sun/source/doctree" includes="**" />
+									<fileset dir="${project.build.directory}/checkout/src/jdk.compiler/share/classes/com/sun/source/doctree" includes="**" />
 								</copy>
 								<copy todir="${dir.source}/com/sun/source/tree">
-									<fileset dir="${project.build.directory}/checkout/src/share/classes/com/sun/source/tree" includes="**" />
+									<fileset dir="${project.build.directory}/checkout/src/jdk.compiler/share/classes/com/sun/source/tree" includes="**" />
 								</copy>
 								<copy todir="${dir.source}/com/sun/source/util">
-									<fileset dir="${project.build.directory}/checkout/src/share/classes/com/sun/source/util" includes="**" />
+									<fileset dir="${project.build.directory}/checkout/src/jdk.compiler/share/classes/com/sun/source/util" includes="**" />
 								</copy>
 								<copy todir="${dir.source}/com/sun/tools/doclint">
-									<fileset dir="${project.build.directory}/checkout/src/share/classes/com/sun/tools/doclint" includes="**" />
+									<fileset dir="${project.build.directory}/checkout/src/jdk.compiler/share/classes/com/sun/tools/doclint" includes="**" />
 								</copy>
 								<copy todir="${dir.source}/com/sun/tools/doclint/resources">
-									<fileset dir="${project.build.directory}/checkout/src/share/classes/com/sun/tools/doclint/resources" includes="**" />
+									<fileset dir="${project.build.directory}/checkout/src/jdk.compiler/share/classes/com/sun/tools/doclint/resources" includes="**" />
 								</copy>
 								<copy todir="${dir.source}/com/sun/tools/javac">
-									<fileset dir="${project.build.directory}/checkout/src/share/classes/com/sun/tools/javac" includes="**" />
+									<fileset dir="${project.build.directory}/checkout/src/jdk.compiler/share/classes/com/sun/tools/javac" includes="**" />
 								</copy>
 								<copy todir="${dir.source}/com/sun/tools/javac/api">
-									<fileset dir="${project.build.directory}/checkout/src/share/classes/com/sun/tools/javac/api" includes="**" />
+									<fileset dir="${project.build.directory}/checkout/src/jdk.compiler/share/classes/com/sun/tools/javac/api" includes="**" />
 								</copy>
 								<copy todir="${dir.source}/com/sun/tools/javac/code">
-									<fileset dir="${project.build.directory}/checkout/src/share/classes/com/sun/tools/javac/code" includes="**" />
+									<fileset dir="${project.build.directory}/checkout/src/jdk.compiler/share/classes/com/sun/tools/javac/code" includes="**" />
 								</copy>
 								<copy todir="${dir.source}/com/sun/tools/javac/comp">
-									<fileset dir="${project.build.directory}/checkout/src/share/classes/com/sun/tools/javac/comp" includes="**" />
+									<fileset dir="${project.build.directory}/checkout/src/jdk.compiler/share/classes/com/sun/tools/javac/comp" includes="**" />
 								</copy>
 								<copy todir="${dir.source}/com/sun/tools/javac/file">
-									<fileset dir="${project.build.directory}/checkout/src/share/classes/com/sun/tools/javac/file" includes="**" />
+									<fileset dir="${project.build.directory}/checkout/src/jdk.compiler/share/classes/com/sun/tools/javac/file" includes="**" />
 								</copy>
 								<copy todir="${dir.source}/com/sun/tools/javac/jvm">
-									<fileset dir="${project.build.directory}/checkout/src/share/classes/com/sun/tools/javac/jvm" includes="**" />
+									<fileset dir="${project.build.directory}/checkout/src/jdk.compiler/share/classes/com/sun/tools/javac/jvm" includes="**" />
 								</copy>
 								<copy todir="${dir.source}/com/sun/tools/javac/main">
-									<fileset dir="${project.build.directory}/checkout/src/share/classes/com/sun/tools/javac/main" includes="**" />
+									<fileset dir="${project.build.directory}/checkout/src/jdk.compiler/share/classes/com/sun/tools/javac/main" includes="**" />
 								</copy>
 								<copy todir="${dir.source}/com/sun/tools/javac/model">
-									<fileset dir="${project.build.directory}/checkout/src/share/classes/com/sun/tools/javac/model" includes="**" />
+									<fileset dir="${project.build.directory}/checkout/src/jdk.compiler/share/classes/com/sun/tools/javac/model" includes="**" />
 								</copy>
 								<copy todir="${dir.source}/com/sun/tools/javac/parser">
-									<fileset dir="${project.build.directory}/checkout/src/share/classes/com/sun/tools/javac/parser" includes="**" />
+									<fileset dir="${project.build.directory}/checkout/src/jdk.compiler/share/classes/com/sun/tools/javac/parser" includes="**" />
+								</copy>
+								<copy todir="${dir.source}/com/sun/tools/javac/platform">
+									<fileset dir="${project.build.directory}/checkout/src/jdk.compiler/share/classes/com/sun/tools/javac/platform" includes="**" />
 								</copy>
 								<copy todir="${dir.source}/com/sun/tools/javac/processing">
-									<fileset dir="${project.build.directory}/checkout/src/share/classes/com/sun/tools/javac/processing" includes="**" />
+									<fileset dir="${project.build.directory}/checkout/src/jdk.compiler/share/classes/com/sun/tools/javac/processing" includes="**" />
 								</copy>
 								<copy todir="${dir.source}/com/sun/tools/javac/resources">
-									<fileset dir="${project.build.directory}/checkout/src/share/classes/com/sun/tools/javac/resources" includes="**" />
+									<fileset dir="${project.build.directory}/checkout/src/jdk.compiler/share/classes/com/sun/tools/javac/resources" includes="**" />
 								</copy>
 								<copy todir="${dir.source}/com/sun/tools/javac/tree">
-									<fileset dir="${project.build.directory}/checkout/src/share/classes/com/sun/tools/javac/tree" includes="**" />
+									<fileset dir="${project.build.directory}/checkout/src/jdk.compiler/share/classes/com/sun/tools/javac/tree" includes="**" />
 								</copy>
 								<copy todir="${dir.source}/com/sun/tools/javac/util">
-									<fileset dir="${project.build.directory}/checkout/src/share/classes/com/sun/tools/javac/util" includes="**" />
+									<fileset dir="${project.build.directory}/checkout/src/jdk.compiler/share/classes/com/sun/tools/javac/util" includes="**" />
 								</copy>
 								<copy todir="${dir.source}/com/sun/tools/javah">
-									<fileset dir="${project.build.directory}/checkout/src/share/classes/com/sun/tools/javah" includes="**" />
+									<fileset dir="${project.build.directory}/checkout/src/jdk.compiler/share/classes/com/sun/tools/javah" includes="**" />
 								</copy>
 								<copy todir="${dir.source}/com/sun/tools/javah/resources">
-									<fileset dir="${project.build.directory}/checkout/src/share/classes/com/sun/tools/javah/resources" includes="**" />
+									<fileset dir="${project.build.directory}/checkout/src/jdk.compiler/share/classes/com/sun/tools/javah/resources" includes="**" />
 								</copy>
 								<copy todir="${dir.source}/com/sun/tools/sjavac">
-									<fileset dir="${project.build.directory}/checkout/src/share/classes/com/sun/tools/sjavac" includes="**" />
+									<fileset dir="${project.build.directory}/checkout/src/jdk.compiler/share/classes/com/sun/tools/sjavac" includes="**" />
+								</copy>
+								<copy todir="${dir.source}/com/sun/tools/sjavac/client">
+									<fileset dir="${project.build.directory}/checkout/src/jdk.compiler/share/classes/com/sun/tools/sjavac/client" includes="**" />
 								</copy>
 								<copy todir="${dir.source}/com/sun/tools/sjavac/comp">
-									<fileset dir="${project.build.directory}/checkout/src/share/classes/com/sun/tools/sjavac/comp" includes="**" />
+									<fileset dir="${project.build.directory}/checkout/src/jdk.compiler/share/classes/com/sun/tools/sjavac/comp" includes="**" />
+								</copy>
+								<copy todir="${dir.source}/com/sun/tools/sjavac/comp/dependencies">
+									<fileset dir="${project.build.directory}/checkout/src/jdk.compiler/share/classes/com/sun/tools/sjavac/comp/dependencies" includes="**" />
+								</copy>
+								<copy todir="${dir.source}/com/sun/tools/sjavac/options">
+									<fileset dir="${project.build.directory}/checkout/src/jdk.compiler/share/classes/com/sun/tools/sjavac/options" includes="**" />
+								</copy>
+								<copy todir="${dir.source}/com/sun/tools/sjavac/pubapi">
+									<fileset dir="${project.build.directory}/checkout/src/jdk.compiler/share/classes/com/sun/tools/sjavac/pubapi" includes="**" />
 								</copy>
 								<copy todir="${dir.source}/com/sun/tools/sjavac/server">
-									<fileset dir="${project.build.directory}/checkout/src/share/classes/com/sun/tools/sjavac/server" includes="**" />
+									<fileset dir="${project.build.directory}/checkout/src/jdk.compiler/share/classes/com/sun/tools/sjavac/server" includes="**" />
 								</copy>
-								<!--
+								<copy todir="${dir.source}/com/sun/tools/sjavac/server/log">
+									<fileset dir="${project.build.directory}/checkout/src/jdk.compiler/share/classes/com/sun/tools/sjavac/server/log" includes="**" />
+								</copy>
+								<copy todir="${dir.source}/jdk/internal/shellsupport/doc">
+									<fileset dir="${project.build.directory}/checkout/src/jdk.compiler/share/classes/jdk/internal/shellsupport/doc" includes="**" />
+								</copy>
+								<copy todir="${dir.source}/jdk/internal/shellsupport/doc/resources">
+									<fileset dir="${project.build.directory}/checkout/src/jdk.compiler/share/classes/jdk/internal/shellsupport/doc/resources" includes="**" />
+								</copy>
 								<copy todir="${dir.source}/META-INF/services">
-									<fileset dir="${project.build.directory}/checkout/src/share/classes/META-INF/services" includes="**" />
+									<fileset dir="${project.build.directory}/checkout/src/jdk.compiler/share/classes/META-INF/services" includes="**" />
 								</copy>
-								-->
+								<copy todir="${dir.source}/">
+									<fileset dir="${project.build.directory}/checkout/src/jdk.compiler/share/classes/" includes="module-info.java" />
+								</copy>
 								<copy todir="${dir.source}/">
 									<fileset dir="${project.basedir}" includes="LICENSE" />
 								</copy>
@@ -307,13 +334,11 @@
 						<configuration>
 							<target>
 								<copy todir="${project.build.outputDirectory}">
-									<fileset dir="${project.build.directory}/checkout/build/classes" includes="**" />
+									<fileset dir="${project.build.directory}/checkout/build/modules/jdk.compiler" includes="**" />
 								</copy>
-								<!--
 								<copy todir="${project.build.outputDirectory}/META-INF/services">
 									<fileset dir="${dir.source}/META-INF/services" includes="**" />
 								</copy>
-								-->
 								<copy todir="${project.build.outputDirectory}">
 									<fileset dir="${project.basedir}" includes="LICENSE" />
 								</copy>
@@ -395,7 +420,7 @@
 						<Bundle-License>GPLv2+CE</Bundle-License>
 						<Specification-Vendor>OpenJDK</Specification-Vendor>
 						<Specification-Title>${project.artifactId}</Specification-Title> 
-						<Specification-Version>${version.java}</Specification-Version>
+						<Specification-Version>1.9</Specification-Version>
 						<Scm-Url>${openjdk.langtools.scm.url}</Scm-Url>
 						<Project-Url>${project.url}</Project-Url>
 					</instructions>
@@ -436,7 +461,7 @@
 						<configuration>
 							<sources>
 								<source>${dir.source}</source>
-								<source>${project.build.directory}/checkout/build/gensrc</source>
+								<source>${project.build.directory}/checkout/build/gensrc/jdk.compiler</source>
 							</sources>
 						</configuration>
 					</execution>
@@ -468,7 +493,7 @@
 						</goals>
 						<configuration>
 							<source>${version.java}</source>
-							<sourcepath>${dir.source}:${project.build.directory}/checkout/build/gensrc</sourcepath>
+							<sourcepath>${dir.source}:${project.build.directory}/checkout/build/gensrc/jdk.compiler</sourcepath>
 							<failOnError>false</failOnError>
 						</configuration>
 					</execution>
