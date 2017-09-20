@@ -47,7 +47,7 @@ To build run with `mvn -P '!strict' clean install'`,  the javadoc generation tak
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.earcam.wrapped/jdk.compiler/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.earcam.wrapped/jdk.compiler)
 
 [![Open Issues](https://img.shields.io/bitbucket/issues/earcam/jdk.compiler.svg)](https://bitbucket.org/earcam/jdk.compiler/issues)
-[![Javadoc](http://www.javadoc.io/badge/io.earcam.wrapped/jdk.compiler.svg?color=green)](http://www.javadoc.io/doc/io.earcam.wrapped/jdk.compiler)
+[![Javadoc](https://www.javadoc.io/badge/io.earcam.wrapped/jdk.compiler.svg?color=green)](https://www.javadoc.io/doc/io.earcam.wrapped/jdk.compiler)
 
 
 ## Supported JVMs
