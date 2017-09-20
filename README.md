@@ -37,7 +37,7 @@ Instead you may replace with:
 
 ## Miscellaneous
 
-Need something else from `tools.jar`? There's another project [com.sun.tools.attach](https://bitbucket.org/earcam/com.sun.tools.attach) repackaging `com.sun.tools.attach` and `com.sun.tools.attach.spi` as a Maven dependency.
+Need something else from `tools.jar`? There's another project [com.sun.tools.attach](https://bitbucket.org/earcam/com.sun.tools.attach) repackaging `com.sun.tools.attach` and `com.sun.tools.attach.spi` as a Maven dependency.  (This may be out-of-date, so check Maven central for the groupId [io.earcam.wrapped](http://search.maven.org/#search|ga|1|g%3A%22io.earcam.wrapped%22), for other possible libraries wrapped for Maven).
 
 To build run with `mvn -P '!strict' clean install'`,  the javadoc generation takes ages as it generates tonnes of UML diagrams
 
