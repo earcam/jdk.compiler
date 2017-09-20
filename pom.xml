@@ -1,0 +1,479 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>io.earcam.maven</groupId>
+		<artifactId>io.earcam.maven.pom</artifactId>
+		<version>2.1.1-SNAPSHOT</version>
+	</parent>
+
+	<groupId>io.earcam.wrapped</groupId>
+	<artifactId>jdk.compiler</artifactId>
+	<version>1.8.132</version>
+	<packaging>jar</packaging>
+
+	<description>Maven repackaging of OpenJDK's jdk.compiler module</description>
+	<!--
+	
+	Required packages are derived from running JMOD against the jdk.compiler module.
+	
+	This a manual effort:
+	
+	
+	1. Ensure maven property "version.java.platform" is set to the correct version
+	
+	2. Run the relevant copy 'n' paste command:
+	
+	# FOR JDK8: prefix path with "src/share", COPY PASTE COMMAND:
+	jmod list /usr/lib/jvm/java-9-oracle/jmods/jdk.compiler.jmod | \
+	   egrep '^(classes/com|classes/jdk|classes/META-INF)' | \
+	   grep -v 'shellsupport' | \
+	   perl -p -e 's/(.*)\/[^\-]*/$1/gi' | \
+	   sort | uniq | \
+	   perl -p -e 's/^(.*)$/<copy todir="\${dir.source}\/$1">\n\t<fileset dir="\${project.build.directory}\/checkout\/src\/share\/$1" includes="**" \/>\n<\/copy>/gi'
+	
+	
+	
+	
+	
+	# FOR JDK9: prefix path with "src/jdk.compiler/share", COPY PASTE COMMAND:
+	
+	jmod list /usr/lib/jvm/java-9-oracle/jmods/jdk.compiler.jmod | \
+	   egrep '^(classes/module-info|classes/com|classes/jdk|classes/META-INF)' | \
+	   perl -p -e 's/^classes\/(.*)\/[^\/\-]*$/$1\n/gmx' | \
+	   perl -p -e 's/^classes\/module\-info\.class/module-info.java/' | \
+	   sort | uniq | \
+	   perl -p -e 's/^(.*)$/\t\t\t\t\t\t\t\t<copy todir="\${dir.source}\/$1">\n\t\t\t\t\t\t\t\t\t<fileset dir="\${project.build.directory}\/checkout\/src\/jdk.compiler\/share\/classes\/$1" includes="**" \/>\n\t\t\t\t\t\t\t\t<\/copy>/gi'
+	
+	
+	3. copy output and past into maven-antrun-plugin's copy-sources below ...
+
+	-->
+	<url>https://bitbucket.org/earcam/jdk.compiler</url>
+	<inceptionYear>2017</inceptionYear>
+	<licenses>
+		<license>
+			<name>GNU Lesser General Public License v2 + Classpath Exception</name>
+			<url>http://openjdk.java.net/legal/gplv2+ce.html</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+
+	<scm>
+		<connection>scm:git:git://bitbucket.org/${coordinate.username.project}.git</connection>
+		<developerConnection>scm:git:ssh://bitbucket.org:${coordinate.username.project}.git</developerConnection>
+		<url>https://bitbucket.org/${coordinate.username.project}</url>
+		<tag>HEAD</tag>
+	</scm>
+	<issueManagement>
+		<system>BitBucket</system>
+		<url>https://bitbucket.org/${coordinate.username.project}/issues</url>
+	</issueManagement>
+	<ciManagement>
+		<system>Jenkins</system>
+		<url>https://travis-ci.org/${coordinate.username.project}</url>
+	</ciManagement>
+	<distributionManagement>
+		<site>
+			<id>BitBucket</id>
+			<name>No site to deploy</name>
+			<url>https://bitbucket.org/${coordinate.username.project}</url>
+		</site>
+	</distributionManagement>
+
+	<properties>
+		<openjdk.langtools.scm.tag>jdk8-b132</openjdk.langtools.scm.tag>
+		
+		<version.java.platform>8</version.java.platform>
+		<version.java>1.${version.java.platform}</version.java>
+		<maven.compiler.source>${version.java}</maven.compiler.source>
+		<maven.compiler.target>${version.java}</maven.compiler.target>
+
+		<coordinate.username.project>earcam/${project.artifactId}</coordinate.username.project>
+		<openjdk.langtools.scm.url>http://hg.openjdk.java.net/jdk${version.java.platform}/jdk${version.java.platform}/langtools/</openjdk.langtools.scm.url>
+		<dir.source>${project.build.directory}/faux-source</dir.source>
+	</properties>
+
+	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-toolchains-plugin</artifactId>
+					<version>1.1</version>
+					<executions>
+						<execution>
+							<goals>
+								<goal>toolchain</goal>
+							</goals>
+						</execution>
+					</executions>
+					<configuration>
+						<toolchains>
+							<jdk>
+								<version>[${version.java},)</version>
+								<vendor>oracle</vendor>
+							</jdk>
+						</toolchains>
+					</configuration>
+				</plugin>
+
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<inherited>true</inherited>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>org.apache.maven.plugins</groupId>
+										<artifactId>maven-scm-plugin</artifactId>
+										<versionRange>[1.9.5,)</versionRange>
+										<goals>
+											<goal>checkout</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore />
+									</action>
+								</pluginExecution>
+
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>org.apache.maven.plugins</groupId>
+										<artifactId>maven-antrun-plugin</artifactId>
+										<versionRange>[1.8,)</versionRange>
+										<goals>
+											<goal>run</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore />
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-scm-plugin</artifactId>
+				<version>1.9.5</version>
+				<configuration>
+					<connectionUrl>scm:hg:${openjdk.langtools.scm.url}</connectionUrl>
+					<scmVersion>${openjdk.langtools.scm.tag}</scmVersion>
+					<scmVersionType>tag</scmVersionType>
+					<skipCheckoutIfExists>true</skipCheckoutIfExists>
+				</configuration>
+				<executions>
+					<execution>
+						<id>clone</id>
+						<goals>
+							<goal>checkout</goal>
+						</goals>
+						<phase>generate-sources</phase>
+					</execution>
+				</executions>
+				<dependencies>
+					<dependency>
+						<groupId>org.apache.maven.scm</groupId>
+						<artifactId>maven-scm-provider-hg</artifactId>
+						<version>1.9.5</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+			
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.8</version>
+				<executions>
+					<execution>
+						<id>build-langtools</id>
+						<phase>process-sources</phase>
+						<configuration>
+							<tasks>
+								<property name="boot.java.home" value="${env.JAVA_8_HOME}" />
+								<property name="basedir" value="${project.build.directory}/checkout/make" />
+								<ant 
+									antfile="${project.build.directory}/checkout/make/build.xml"
+									dir="${project.build.directory}/checkout"/>
+							</tasks>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				
+					<execution>
+						<id>copy-sources</id>
+						<phase>generate-resources</phase>
+						<configuration>
+							<target>
+								<copy todir="${dir.source}/com/sun/source/doctree">
+									<fileset dir="${project.build.directory}/checkout/src/share/classes/com/sun/source/doctree" includes="**" />
+								</copy>
+								<copy todir="${dir.source}/com/sun/source/tree">
+									<fileset dir="${project.build.directory}/checkout/src/share/classes/com/sun/source/tree" includes="**" />
+								</copy>
+								<copy todir="${dir.source}/com/sun/source/util">
+									<fileset dir="${project.build.directory}/checkout/src/share/classes/com/sun/source/util" includes="**" />
+								</copy>
+								<copy todir="${dir.source}/com/sun/tools/doclint">
+									<fileset dir="${project.build.directory}/checkout/src/share/classes/com/sun/tools/doclint" includes="**" />
+								</copy>
+								<copy todir="${dir.source}/com/sun/tools/doclint/resources">
+									<fileset dir="${project.build.directory}/checkout/src/share/classes/com/sun/tools/doclint/resources" includes="**" />
+								</copy>
+								<copy todir="${dir.source}/com/sun/tools/javac">
+									<fileset dir="${project.build.directory}/checkout/src/share/classes/com/sun/tools/javac" includes="**" />
+								</copy>
+								<copy todir="${dir.source}/com/sun/tools/javac/api">
+									<fileset dir="${project.build.directory}/checkout/src/share/classes/com/sun/tools/javac/api" includes="**" />
+								</copy>
+								<copy todir="${dir.source}/com/sun/tools/javac/code">
+									<fileset dir="${project.build.directory}/checkout/src/share/classes/com/sun/tools/javac/code" includes="**" />
+								</copy>
+								<copy todir="${dir.source}/com/sun/tools/javac/comp">
+									<fileset dir="${project.build.directory}/checkout/src/share/classes/com/sun/tools/javac/comp" includes="**" />
+								</copy>
+								<copy todir="${dir.source}/com/sun/tools/javac/file">
+									<fileset dir="${project.build.directory}/checkout/src/share/classes/com/sun/tools/javac/file" includes="**" />
+								</copy>
+								<copy todir="${dir.source}/com/sun/tools/javac/jvm">
+									<fileset dir="${project.build.directory}/checkout/src/share/classes/com/sun/tools/javac/jvm" includes="**" />
+								</copy>
+								<copy todir="${dir.source}/com/sun/tools/javac/main">
+									<fileset dir="${project.build.directory}/checkout/src/share/classes/com/sun/tools/javac/main" includes="**" />
+								</copy>
+								<copy todir="${dir.source}/com/sun/tools/javac/model">
+									<fileset dir="${project.build.directory}/checkout/src/share/classes/com/sun/tools/javac/model" includes="**" />
+								</copy>
+								<copy todir="${dir.source}/com/sun/tools/javac/parser">
+									<fileset dir="${project.build.directory}/checkout/src/share/classes/com/sun/tools/javac/parser" includes="**" />
+								</copy>
+								<copy todir="${dir.source}/com/sun/tools/javac/processing">
+									<fileset dir="${project.build.directory}/checkout/src/share/classes/com/sun/tools/javac/processing" includes="**" />
+								</copy>
+								<copy todir="${dir.source}/com/sun/tools/javac/resources">
+									<fileset dir="${project.build.directory}/checkout/src/share/classes/com/sun/tools/javac/resources" includes="**" />
+								</copy>
+								<copy todir="${dir.source}/com/sun/tools/javac/tree">
+									<fileset dir="${project.build.directory}/checkout/src/share/classes/com/sun/tools/javac/tree" includes="**" />
+								</copy>
+								<copy todir="${dir.source}/com/sun/tools/javac/util">
+									<fileset dir="${project.build.directory}/checkout/src/share/classes/com/sun/tools/javac/util" includes="**" />
+								</copy>
+								<copy todir="${dir.source}/com/sun/tools/javah">
+									<fileset dir="${project.build.directory}/checkout/src/share/classes/com/sun/tools/javah" includes="**" />
+								</copy>
+								<copy todir="${dir.source}/com/sun/tools/javah/resources">
+									<fileset dir="${project.build.directory}/checkout/src/share/classes/com/sun/tools/javah/resources" includes="**" />
+								</copy>
+								<copy todir="${dir.source}/com/sun/tools/sjavac">
+									<fileset dir="${project.build.directory}/checkout/src/share/classes/com/sun/tools/sjavac" includes="**" />
+								</copy>
+								<copy todir="${dir.source}/com/sun/tools/sjavac/comp">
+									<fileset dir="${project.build.directory}/checkout/src/share/classes/com/sun/tools/sjavac/comp" includes="**" />
+								</copy>
+								<copy todir="${dir.source}/com/sun/tools/sjavac/server">
+									<fileset dir="${project.build.directory}/checkout/src/share/classes/com/sun/tools/sjavac/server" includes="**" />
+								</copy>
+								<!--
+								<copy todir="${dir.source}/META-INF/services">
+									<fileset dir="${project.build.directory}/checkout/src/share/classes/META-INF/services" includes="**" />
+								</copy>
+								-->
+								<copy todir="${dir.source}/">
+									<fileset dir="${project.basedir}" includes="LICENSE" />
+								</copy>
+							</target>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+					
+					<execution>
+						<id>copy-binaries</id>
+						<phase>process-resources</phase>
+						<configuration>
+							<target>
+								<copy todir="${project.build.outputDirectory}">
+									<fileset dir="${project.build.directory}/checkout/build/classes" includes="**" />
+								</copy>
+								<!--
+								<copy todir="${project.build.outputDirectory}/META-INF/services">
+									<fileset dir="${dir.source}/META-INF/services" includes="**" />
+								</copy>
+								-->
+								<copy todir="${project.build.outputDirectory}">
+									<fileset dir="${project.basedir}" includes="LICENSE" />
+								</copy>
+							</target>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+				
+				<dependencies>
+					<dependency>
+						<groupId>org.apache.ant</groupId>
+						<artifactId>ant-apache-bsf</artifactId>
+						<version>1.10.1</version>
+					</dependency>
+
+					<dependency>
+						<groupId>rhino</groupId>
+						<artifactId>js</artifactId>
+						<version>1.7R2</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.6.1</version>
+				<configuration>
+					<skip>true</skip>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.20</version>
+				<configuration>
+					<parallel>false</parallel>
+					<testFailureIgnore>false</testFailureIgnore>
+					<includes>
+						<include>**/*Test.java</include>
+					</includes>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>test</goal>
+						</goals>
+					</execution>
+				</executions>
+				<dependencies>
+					<dependency>
+						<groupId>org.apache.maven.surefire</groupId>
+						<artifactId>surefire-junit4</artifactId>
+						<version>2.20</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<version>3.2.0</version>
+				<extensions>true</extensions>
+				<configuration>
+					<archive>
+						<addMavenDescriptor>true</addMavenDescriptor>
+					</archive>
+					<supportedProjectTypes>
+						<supportedProjectType>jar</supportedProjectType>
+					</supportedProjectTypes>
+					<instructions>
+						<Export-Package>*</Export-Package>
+						<Bundle-Description>${project.description}</Bundle-Description>
+						<Bundle-DocURL>http://openjdk.java.net/groups/compiler/</Bundle-DocURL>
+						<Bundle-License>GPLv2+CE</Bundle-License>
+						<Specification-Vendor>OpenJDK</Specification-Vendor>
+						<Specification-Title>${project.artifactId}</Specification-Title> 
+						<Specification-Version>${version.java}</Specification-Version>
+						<Scm-Url>${openjdk.langtools.scm.url}</Scm-Url>
+						<Project-Url>${project.url}</Project-Url>
+					</instructions>
+				</configuration>
+				<executions>
+					<execution>
+						<id>create-manifest</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>manifest</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>3.0.2</version>
+				<configuration>
+					<archive>
+						<manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+					</archive>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>3.0.0</version>
+				<executions>
+					<execution>
+						<id>add-source</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>add-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>${dir.source}</source>
+								<source>${project.build.directory}/checkout/build/gensrc</source>
+							</sources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>archive-source</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>javadoc-VERY_SLOW_HAS_NOT_HUNG-PATIENCE_GRASSHOPPER</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+						<configuration>
+							<source>${version.java}</source>
+							<sourcepath>${dir.source}:${project.build.directory}/checkout/build/gensrc</sourcepath>
+							<failOnError>false</failOnError>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+</project>
